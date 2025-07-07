@@ -85,7 +85,7 @@ Automatically assigns a task to the user with the fewest assigned tasks.
 Can also assign manually from dropdown.
 
 📸 Screenshots
-You can paste your screenshots here using.
+
 ![Kanban UI Screenshot](./assets/s8.png)
 ![Kanban UI Screenshot](./assets/s9.png)
 ![Kanban UI Screenshot](./assets/s10.png)
