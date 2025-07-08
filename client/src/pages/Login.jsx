@@ -6,14 +6,15 @@ import { useNavigate } from 'react-router-dom';
 function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
   const navigate = useNavigate();
-
+  const API_BASE = process.env.REACT_APP_API_BASE || '/api';
+  
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('/api/auth/login', form);
+      const res = await axios.post(`${API_BASE}/auth/login`, form);
       localStorage.setItem('token', res.data.token);
       navigate('/');
     } catch (err) {

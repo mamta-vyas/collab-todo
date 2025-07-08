@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 function ActionLogs({ onClose }) {
+  const API_BASE = process.env.REACT_APP_API_BASE || '/api';
   const [logs, setLogs] = useState([]);
 
   useEffect(() => {
     const fetchLogs = async () => {
       try {
-        const res = await axios.get('/api/logs', {
-          headers: { Authorization: localStorage.getItem('token') }
+        const res = await axios.get(`${API_BASE}/logs`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+
         });
         setLogs(res.data);
       } catch (err) {

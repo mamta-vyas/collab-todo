@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import socket from '../socket';
 import {
@@ -7,6 +7,7 @@ import {
   Draggable
 } from '@hello-pangea/dnd';
 import ActionLogs from '../components/ActionLogs';
+import { useNavigate } from 'react-router-dom';
 
 
 const statuses = [
@@ -26,39 +27,47 @@ function TaskBoard() {
   const [editTask, setEditTask] = useState(null);
   const [users, setUsers] = useState([]);
   const [showLogs, setShowLogs] = useState(false);
+  const [conflictData, setConflictData] = useState(null);
+  const API_BASE = process.env.REACT_APP_API_BASE || '/api';
+  const navigate = useNavigate();
 
 
-  const fetchTasks = async () => {
+  // ✅ useCallback for fetchTasks
+  const fetchTasks = useCallback(async () => {
     try {
-      const res = await axios.get('/api/tasks', {
-        headers: { Authorization: localStorage.getItem('token') }
+      const res = await axios.get(`${API_BASE}/tasks`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       setTasks(res.data);
     } catch (err) {
       console.error('Error fetching tasks:', err);
     }
-  };
+  }, [API_BASE]); // ✅ Add only stable dependencies
 
-  const fetchUsers = async () => {
+  // ✅ useCallback for fetchUsers
+  const fetchUsers = useCallback(async () => {
     try {
-      const res = await axios.get('/api/users', {
-        headers: { Authorization: localStorage.getItem('token') }
+      const res = await axios.get(`${API_BASE}/users`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       setUsers(res.data);
     } catch (err) {
       console.error('Error fetching users:', err);
     }
-  };
-
+  }, [API_BASE]);
   const onDragEnd = async (result) => {
     const { source, destination, draggableId } = result;
     if (!destination || source.droppableId === destination.droppableId) return;
 
-    const updatedTask = tasks.find(t => t._id === draggableId);
-    updatedTask.status = statusMap[destination.droppableId];
+    const updatedTask = {
+  ...tasks.find(t => t._id === draggableId),
+  status: statusMap[destination.droppableId],
+};
 
-    await axios.put(`/api/tasks/${draggableId}`, updatedTask, {
-      headers: { Authorization: localStorage.getItem('token') }
+
+    await axios.put(`${API_BASE}/tasks/${draggableId}`, updatedTask, {
+     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+
     });
   };
 
@@ -83,7 +92,14 @@ function TaskBoard() {
     socket.off('task-updated');
     socket.off('task-deleted');
   };
-}, []);
+}, [fetchTasks, fetchUsers]);
+
+useEffect(() => {
+  const token = localStorage.getItem('token');
+  if (!token) navigate('/login');
+}, [navigate]);
+
+
 
 const handleLogout = () => {
   localStorage.removeItem('token');   // remove token
@@ -94,8 +110,9 @@ const handleLogout = () => {
 
   const handleSmartAssign = async (taskId) => {
     try {
-      await axios.post(`/api/tasks/${taskId}/smart-assign`, {}, {
-        headers: { Authorization: localStorage.getItem('token') }
+      await axios.post(`${API_BASE}/tasks/${taskId}/smart-assign`, {}, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+
       });
     } catch (err) {
       alert(err.response?.data?.error || 'Smart assign failed');
@@ -103,34 +120,58 @@ const handleLogout = () => {
   };
 
   const handleEditSave = async () => {
-    try {
-      const taskToSend = { ...editTask };
+  try {
+    const taskToSend = { ...editTask };
 
-      if (!taskToSend.assignedTo) {
-        taskToSend.assignedTo = null;
-      }
-
-      if (editTask._id) {
-        await axios.put(`/api/tasks/${editTask._id}`, taskToSend, {
-          headers: { Authorization: localStorage.getItem('token') }
-        });
-      } else {
-        await axios.post(`/api/tasks`, taskToSend, {
-          headers: { Authorization: localStorage.getItem('token') }
-        });
-      }
-
-      setEditTask(null);
-    } catch (err) {
-      alert(err.response?.data?.error || 'Failed to save task');
+    if (!taskToSend.assignedTo) {
+      taskToSend.assignedTo = null;
     }
-  };
 
-  const handleDelete = async (taskId) => {
+    if (!editTask._id) {
+      // It's a new task → just create
+      await axios.post(`${API_BASE}/tasks`, taskToSend, {
+       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+
+      });
+      setEditTask(null);
+      return;
+    }
+
+    // ✅ Check for conflicts before updating
+    const latest = await axios.get(`${API_BASE}/tasks/${editTask._id}`, {
+     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+
+    });
+
+    const latestTask = latest.data;
+
+    if (new Date(latestTask.updatedAt).getTime() !== new Date(editTask.updatedAt).getTime()) {
+      // Conflict detected
+      setConflictData({
+        serverTask: latestTask,
+        localTask: editTask
+      });
+      return;
+    }
+
+    // ✅ No conflict → safe to update
+    await axios.put(`${API_BASE}/tasks/${editTask._id}`, taskToSend, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+
+    });
+
+    setEditTask(null);
+  } catch (err) {
+    alert(err.response?.data?.error || 'Failed to save task');
+  }
+};
+
+const handleDelete = async (taskId) => {
     if (!window.confirm('Are you sure you want to delete this task?')) return;
     try {
-      await axios.delete(`/api/tasks/${taskId}`, {
-        headers: { Authorization: localStorage.getItem('token') }
+      await axios.delete(`${API_BASE}/tasks/${taskId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+
       });
     } catch (err) {
       alert('Delete failed');
@@ -316,6 +357,64 @@ const handleLogout = () => {
         </div>
       )}
       {showLogs && <ActionLogs onClose={() => setShowLogs(false)} />}
+
+{conflictData && (
+  <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded shadow-md w-full max-w-2xl">
+      <h2 className="text-lg font-bold mb-4 text-red-600">⚠️ Conflict Detected</h2>
+      <p className="mb-2">Another user has updated this task while you were editing.</p>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <h3 className="font-semibold text-gray-700">🧍 Your Version</h3>
+          <pre className="bg-gray-100 p-3 rounded text-sm whitespace-pre-wrap">
+{JSON.stringify(conflictData.localTask, null, 2)}
+          </pre>
+        </div>
+        <div>
+          <h3 className="font-semibold text-gray-700">🌐 Server Version</h3>
+          <pre className="bg-gray-100 p-3 rounded text-sm whitespace-pre-wrap">
+{JSON.stringify(conflictData.serverTask, null, 2)}
+          </pre>
+        </div>
+      </div>
+
+      <div className="flex justify-end gap-3 mt-4">
+        <button
+          onClick={() => setConflictData(null)}
+          className="px-4 py-2 bg-gray-300 rounded"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={async () => {
+            // Overwrite with your version
+            await axios.put(`/api/tasks/${conflictData.localTask._id}`, conflictData.localTask, {
+              headers: { Authorization: localStorage.getItem('token') }
+            });
+            setConflictData(null);
+            setEditTask(null);
+          }}
+          className="px-4 py-2 bg-red-600 text-white rounded"
+        >
+          Overwrite Anyway
+        </button>
+
+        <button
+          onClick={() => {
+            // Merge manually → reopen modal with server version
+            setEditTask(conflictData.serverTask);
+            setConflictData(null);
+          }}
+          className="px-4 py-2 bg-blue-600 text-white rounded"
+        >
+          Merge Manually
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
     </div>
   );

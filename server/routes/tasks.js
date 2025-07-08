@@ -55,6 +55,20 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
+// ✅ Get a single task by ID (required for conflict detection)
+router.get('/:id', auth, async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.id).populate('assignedTo', 'name');
+    if (!task) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+    res.json(task);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error while fetching task' });
+  }
+});
+
+
 // ✅ Update task
 router.put('/:id', auth, async (req, res) => {
   try {

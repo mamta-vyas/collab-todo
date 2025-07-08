@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 function Register() {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const navigate = useNavigate();
+  const API_BASE = process.env.REACT_APP_API_BASE || '/api';
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -12,7 +13,7 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/api/auth/register', form);
+      await axios.post(`${API_BASE}/auth/register`, form);
       alert('Registration successful! You can now login.');
       navigate('/login');
     } catch (err) {

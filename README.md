@@ -84,6 +84,9 @@ Automatically assigns a task to the user with the fewest assigned tasks.
 
 Can also assign manually from dropdown.
 
+📘 [Logic Document](./Logic_Document.pdf)
+
+
 📸 Screenshots
 ![ss1](https://github.com/user-attachments/assets/e1f0d57c-172e-49e7-bc9a-8ea6701e805e)
 ![ss2](https://github.com/user-attachments/assets/1e2f7a48-960c-4bae-9dda-16dcac5aa6af)
