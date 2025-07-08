@@ -86,12 +86,12 @@ Can also assign manually from dropdown.
 
 📸 Screenshots
 
-![Kanban UI Screenshot](assets/ss1.png)
-![Kanban UI Screenshot](assets/ss2.png)
-![Kanban UI Screenshot](assets/ss3.png)
-![Kanban UI Screenshot](assets/ss4.png)
-![Kanban UI Screenshot](assets/ss5.png)
-![Kanban UI Screenshot](assets/ss6.png)
+![Kanban UI Screenshot](./assets/ss1.png)
+![Kanban UI Screenshot](./assets/ss2.png)
+![Kanban UI Screenshot](./assets/ss3.png)
+![Kanban UI Screenshot](./assets/ss4.png)
+![Kanban UI Screenshot](./assets/ss5.png)
+![Kanban UI Screenshot](./assets/ss6.png)
 
 
 
