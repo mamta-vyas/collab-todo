@@ -86,7 +86,7 @@ Can also assign manually from dropdown.
 
 📸 Screenshots
 
-![Kanban UI Screenshot](./assets/ss1.png)
+![Test Screenshot](https://raw.githubusercontent.com/mamta-vyas/collab-todo/main/assets/ss1.png)
 ![Kanban UI Screenshot](./assets/ss2.png)
 ![Kanban UI Screenshot](./assets/ss3.png)
 ![Kanban UI Screenshot](./assets/ss4.png)
