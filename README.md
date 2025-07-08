@@ -85,14 +85,11 @@ Automatically assigns a task to the user with the fewest assigned tasks.
 Can also assign manually from dropdown.
 
 📸 Screenshots
-![Kanban UI Screenshot](https://raw.githubusercontent.com/mamta-vyas/collab-todo/main/assets/ss1.png)
-![Kanban UI Screenshot](https://raw.githubusercontent.com/mamta-vyas/collab-todo/main/assets/ss2.png)
-![Kanban UI Screenshot](https://raw.githubusercontent.com/mamta-vyas/collab-todo/main/assets/ss3.png)
-![Kanban UI Screenshot](https://raw.githubusercontent.com/mamta-vyas/collab-todo/main/assets/ss4.png)
-![Kanban UI Screenshot](https://raw.githubusercontent.com/mamta-vyas/collab-todo/main/assets/ss5.png)
-![Kanban UI Screenshot](https://raw.githubusercontent.com/mamta-vyas/collab-todo/main/assets/ss6.png)
-
-
+![ss1](https://github.com/user-attachments/assets/e1f0d57c-172e-49e7-bc9a-8ea6701e805e)
+![ss2](https://github.com/user-attachments/assets/1e2f7a48-960c-4bae-9dda-16dcac5aa6af)
+![ss3](https://github.com/user-attachments/assets/fef3c2d4-2201-4af3-b07d-cead8c6f20f3)
+![ss4](https://github.com/user-attachments/assets/d3e84c53-d9a2-418c-9343-34f6dd8d1e8d)
+![ss5](https://github.com/user-attachments/assets/c0e10a95-dd59-41d8-bfaa-6d79e197d700)
 
 
 
