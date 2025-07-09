@@ -1,16 +1,15 @@
+// src/components/ActionLogs.jsx
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios from '../axios'; // ✅ use custom axios instance
 
 function ActionLogs({ onClose }) {
-  const API_BASE = process.env.REACT_APP_API_BASE || '/api';
   const [logs, setLogs] = useState([]);
 
   useEffect(() => {
     const fetchLogs = async () => {
       try {
-        const res = await axios.get(`${API_BASE}/logs`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-
+        const res = await axios.get('/logs', {
+          headers: { Authorization: localStorage.getItem('token') },
         });
         setLogs(res.data);
       } catch (err) {
@@ -19,7 +18,7 @@ function ActionLogs({ onClose }) {
     };
 
     fetchLogs();
-  }, [API_BASE]);
+  }, []);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 overflow-auto">
@@ -42,7 +41,9 @@ function ActionLogs({ onClose }) {
               {logs.map((log) => (
                 <li key={log._id} className="border p-3 rounded">
                   <p className="text-sm">
-                    <strong>{log.user?.name || 'Unknown user'}</strong> <span className="italic">{log.action}</span> task <strong>"{log.task?.title || 'Untitled'}"</strong>
+                    <strong>{log.user?.name || 'Unknown user'}</strong>{' '}
+                    <span className="italic">{log.action}</span> task{' '}
+                    <strong>"{log.task?.title || 'Untitled'}"</strong>
                   </p>
                   <p className="text-xs text-gray-500">
                     {new Date(log.createdAt).toLocaleString()}

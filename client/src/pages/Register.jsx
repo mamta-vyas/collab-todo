@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import axios from '../axios'; // or './axios' if file is in same folder
 
 function Register() {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const navigate = useNavigate();
-  const API_BASE = process.env.REACT_APP_API_BASE || '/api';
-
+ 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+ 
+
     try {
-      await axios.post(`${API_BASE}/auth/register`, form);
+     await axios.post('/auth/register', form);
+
       alert('Registration successful! You can now login.');
       navigate('/login');
     } catch (err) {

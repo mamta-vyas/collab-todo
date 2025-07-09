@@ -1,24 +1,25 @@
 // src/pages/Login.jsx
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import axios from '../axios'; // ✅ using your custom axios instance
 
 function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
   const navigate = useNavigate();
-  const API_BASE = process.env.REACT_APP_API_BASE || '/api';
-  
+
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      const res = await axios.post(`${API_BASE}/auth/login`, form);
+      const res = await axios.post('/auth/login', form); // ✅ no baseURL here
       localStorage.setItem('token', res.data.token);
       navigate('/');
     } catch (err) {
       alert('Login failed');
+      console.error(err.response?.data || err.message);
     }
   };
 

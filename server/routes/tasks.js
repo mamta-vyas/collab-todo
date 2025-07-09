@@ -27,13 +27,14 @@ router.post('/', auth, async (req, res) => {
       return res.status(400).json({ error: 'Title must be unique' });
     }
 
-    const newTask = new Task({
-      title,
-      description,
-      status,
-      priority,
-      assignedTo: assignedTo || undefined
-    });
+   const newTask = new Task({
+  title,
+  description,
+  status,
+  priority,
+  assignedTo: assignedTo === '' ? undefined : assignedTo, 
+});
+
 
     await newTask.save();
 
@@ -71,8 +72,12 @@ router.get('/:id', auth, async (req, res) => {
 
 // ✅ Update task
 router.put('/:id', auth, async (req, res) => {
+  const updatedData = {
+  ...req.body,
+  assignedTo: req.body.assignedTo === '' ? undefined : req.body.assignedTo,
+};
   try {
-    const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
+   const updatedTask = await Task.findByIdAndUpdate(req.params.id, updatedData, { new: true });
 
     // ✅ Populate assigned user name after update
     const populatedUpdatedTask = await Task.findById(updatedTask._id).populate('assignedTo', 'name');
