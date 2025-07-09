@@ -3,7 +3,7 @@ import { io } from 'socket.io-client';
 
 
 // Use correct backend URL
-const URL = process.env.REACT_APP_SOCKET_URL || 'http://localhost:5000';
+const URL = "https://collab-todo.onrender.com" || 'http://localhost:5000';
 
 // Connect socket
 const socket = io(URL, {
