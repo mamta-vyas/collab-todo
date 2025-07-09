@@ -82,6 +82,15 @@ GET	/	Fetch latest 20 logs (with user & task info)
 ✨ Smart Assign Logic
 Automatically assigns a task to the user with the fewest assigned tasks.
 
+🔗 Live Deployment
+Frontend (Netlify): https://kanbanboard-todo-app.netlify.app
+
+Backend (Render): https://collab-todo.onrender.com
+
+Github Repo - https://github.com/mamta-vyas/collab-todo
+
+Youtube recording video link - https://www.youtube.com/watch?v=JQwLcNsCJKY
+
 Can also assign manually from dropdown.
 
 📘 [Logic Document](./Logic_Document.pdf)
@@ -116,5 +125,9 @@ Add pagination in logs
 👤 Author
 Mamta Vyas
 
-GitHub:  https://github.com/mamta-vyas
+https://github.com/mamta-vyas
+
+https://www.linkedin.com/in/mamtavyas/
+
+Email: mamtavyas1990@gmail.com
 
